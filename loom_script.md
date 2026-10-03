@@ -1,6 +1,6 @@
 # 🎙️ Loom Video Walkthrough Script (2–3 Minutes)
 
-**Presenter:** Omkar Jagtap  
+**Presenter:** Omkar Mahajan  
 **Target Duration:** 2 minutes 30 seconds  
 **Objective:** Present the technical solution for the Spotter AI Freight Rate Prediction Assessment clearly, concisely, and confidently.
 
@@ -9,7 +9,7 @@
 ## ⏱️ Video Structure & Talking Points
 
 ### 0:00 – 0:30 | Introduction & Problem Objective
-> *"Hi team, I'm Omkar Jagtap. Today I'm presenting my machine learning solution for Spotter AI's Freight Rate Prediction Challenge.*
+> *"Hi team, I'm Omkar Mahajan. Today I'm presenting my machine learning solution for Spotter AI's Freight Rate Prediction Challenge.*
 >
 > *The objective of this challenge is to accurately predict spot rates in USD for 12,000 future freight loads in `validation.csv` and generate daily rate predictions for a fixed 360-mile Dry Van lane between Lexington and Fort Wayne in December 2025.*
 >

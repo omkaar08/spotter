@@ -129,7 +129,7 @@ def build_pdf_report():
 
     # Header / Title Block
     story.append(Paragraph("Spotter AI — Machine Learning Engineering Assessment", title_style))
-    story.append(Paragraph("<b>Author:</b> Omkar Jagtap | <b>Role:</b> Machine Learning Engineer Candidate | <b>Date:</b> October 2026", subtitle_style))
+    story.append(Paragraph("<b>Author:</b> Omkar Mahajan | <b>Role:</b> Machine Learning Engineer Candidate | <b>Date:</b> October 2026", subtitle_style))
     story.append(HRFlowable(width="100%", thickness=1.5, color=PRIMARY, spaceAfter=12))
 
     # Executive Summary

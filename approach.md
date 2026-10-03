@@ -1,6 +1,6 @@
 # Technical Approach & Methodology Document
 
-**Candidate Name:** Omkar Jagtap  
+**Candidate Name:** Omkar Mahajan  
 **Role:** Machine Learning Engineer Candidate  
 **Assessment:** Spotter AI Freight Rate Prediction Challenge  
 **Date:** October 2026  
