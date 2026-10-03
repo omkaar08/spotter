@@ -1,0 +1,19 @@
+=== SPOTTER ML MODEL EVALUATION REPORT ===
+
+Validation Sample Size: 9,523 loads (Sept-Oct 2025)
+Overall MAE: $149.56
+Overall Median AE: $64.07
+
+--- Error by Equipment Type ---
+equipment   Mean_MAE  Median_AE  Count
+  Dry Van 142.403694  58.292129   5360
+  Flatbed 146.845355  69.255389   1770
+   Reefer 167.615731  77.541679   2393
+
+--- Error by Distance Quintiles ---
+distance_bin   Mean_MAE  Median_AE  Count
+       0-20%  61.741285  29.158357   1906
+      20-40%  85.851079  54.406106   1903
+      40-60% 139.586765  72.411847   1905
+      60-80% 206.893519  96.458732   1904
+     80-100% 253.760095 122.714352   1905
