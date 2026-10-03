@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotter AI - Freight Rate Prediction Presentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0B132B;
+      --card-bg: #1C2541;
+      --accent-blue: #00F2FE;
+      --accent-teal: #4FACFE;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border-color: #334155;
+      --highlight: #38BDF8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Clean Navigation Header */
+    header {
+      padding: 20px 48px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .author-tag {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .author-tag b { color: var(--text-main); }
+
+    /* Main Container & Slide System */
+    .slide-container {
+      flex: 1;
+      position: relative;
+      padding: 36px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide {
+      position: absolute;
+      width: 94%;
+      max-width: 1250px;
+      height: 80vh;
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+    .slide-header { margin-bottom: 20px; }
+    .slide-tag {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 4px;
+    }
+    .slide-title { font-size: 2.3rem; font-weight: 800; letter-spacing: -0.5px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--highlight);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-number {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: #FFF;
+      background: linear-gradient(135deg, #FFF, var(--text-muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 8px 0;
+    }
+
+    ul.feature-list { list-style: none; }
+    ul.feature-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.95rem;
+      color: #E2E8F0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    ul.feature-list li:last-child { border-bottom: none; }
+    ul.feature-list li span.bullet { color: var(--accent-blue); font-weight: bold; }
+
+    .img-box {
+      width: 100%;
+      height: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: #000;
+    }
+
+    pre {
+      font-family: 'JetBrains Mono', monospace;
+      background: #090D16;
+      padding: 16px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: #A7F3D0;
+      border: 1px solid #1E293B;
+      line-height: 1.5;
+    }
+
+    /* Optional Discreet Teleprompter Drawer */
+    .teleprompter-drawer {
+      display: none;
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 2px solid var(--accent-blue);
+      padding: 12px 48px;
+      color: #F8FAFC;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    .teleprompter-drawer.active { display: block; }
+    .teleprompter-drawer b { color: var(--accent-blue); }
+
+    /* Clean Footer Control Bar */
+    footer {
+      padding: 18px 48px;
+      background: rgba(15, 23, 42, 0.9);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-btn {
+      background: linear-gradient(135deg, var(--accent-teal), var(--accent-blue));
+      color: #0B132B;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+    .toggle-script-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .toggle-script-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.15); }
+
+    .dots { display: flex; gap: 10px; }
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--border-color);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .dot.active {
+      background: var(--accent-blue);
+      width: 32px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Clean Top Header -->
+  <header>
+    <div class="logo">SPOTTER AI — FREIGHT RATE ML SOLUTION</div>
+    <div class="author-tag">Candidate: <b>Omkar Jagtap</b> | Machine Learning Engineer</div>
+  </header>
+
+  <!-- Main Presentation Slides Container -->
+  <div class="slide-container">
+
+    <!-- SLIDE 1: Executive Overview -->
+    <div class="slide active" id="slide-1">
+      <div class="slide-header">
+        <div class="slide-tag">Executive Summary</div>
+        <div class="slide-title">Spot Freight Rate Prediction Engine</div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🎯 Business Objective</div>
+          <p style="color: #94A3B8; font-size: 0.95rem; line-height: 1.6;">
+            Predict Spot Freight Rates (<code style="color:var(--accent-blue)">posted_rate</code> in USD) for truckload shipments with high precision, zero data leakage, and robust out-of-time generalization across volatile logistics markets.
+          </p>
+          <div style="margin-top: 20px;">
+            <div class="card-title">📊 Dataset Overview</div>
+            <ul class="feature-list">
+              <li><span class="bullet">✓</span> <b>Development Set:</b> 48,000 loads (Jan 01 – Oct 31, 2025)</li>
+              <li><span class="bullet">✓</span> <b>Validation Set:</b> 12,000 loads (Nov 01 – Dec 31, 2025)</li>
+              <li><span class="bullet">✓</span> <b>Fixed December Test:</b> 31 daily loads (Lexington → Fort Wayne)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+          <div class="card-title">🏆 Key Validation Performance</div>
+          <div class="stat-number">$147.50</div>
+          <div style="color: var(--highlight); font-weight:600; font-size: 1rem;">Out-Of-Time MAE (CatBoost)</div>
+          <div style="margin-top: 24px; width:100%; display:flex; justify-content:space-around;">
+            <div>
+              <div style="font-size: 1.6rem; font-weight:800; color:#FFF;">0.8350</div>
+              <div style="font-size: 0.8rem; color:var(--text-muted);">R² Score</div>
+            </div>
+            <div>
+              <div style="font-size: 1.6rem; font-weight:800; color:#FFF;">$54.72</div>
+              <div style="font-size: 0.8rem; color:var(--text-muted);">Median Abs Error</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: EDA & Domain Physics -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div class="slide-tag">Exploratory Analysis</div>
+        <div class="slide-title">Domain Physics & Data Engineering</div>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">🌐 Spatial Circuitousness</div>
+          <div class="stat-number">0.9995</div>
+          <p style="font-size:0.85rem; color:#94A3B8; line-height:1.5;">Haversine correlation with given road miles. Ratio <code style="color:var(--accent-blue)">distance / Haversine</code> captures geographical detour factor.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">⚡ Quote Signal Physics</div>
+          <div class="stat-number">0.782 R²</div>
+          <p style="font-size:0.85rem; color:#94A3B8; line-height:1.5;">Product term <code style="color:var(--accent-blue)">distance * quote_signal</code> explains 78% of rate variance prior to machine learning modeling.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🚛 Equipment Premiums</div>
+          <div class="stat-number">+12.3%</div>
+          <p style="font-size:0.85rem; color:#94A3B8; line-height:1.5;">Reefer ($2.38/mi) and Flatbed ($2.29/mi) command significant rate per mile premiums over standard Dry Van ($2.12/mi).</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <div class="card-title">🧹 Data Quality & Missing Value Imputation</div>
+        <p style="font-size: 0.95rem; color:#CBD5E1; line-height:1.6;">
+          Missing values were strictly localized to <code style="color:var(--accent-blue)">weight</code> (0.6%) and <code style="color:var(--accent-blue)">market_index</code> (0.8%). Imputed via equipment-specific medians and daily market medians, completely eliminating look-ahead bias and avoiding arbitrary mean imputation.
+        </p>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Validation Strategy -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div class="slide-tag">Validation Framework</div>
+        <div class="slide-title">Out-Of-Time (OOT) Temporal Validation</div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">⚠️ Why Random K-Fold Fails</div>
+          <p style="font-size:0.95rem; color:#94A3B8; line-height:1.6; margin-bottom:14px;">
+            Random cross-validation introduces severe <b>temporal look-ahead leakage</b> by using future loads to predict past loads in time-series data.
+          </p>
+          <div style="background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239,68,68,0.3); padding:14px; border-radius:10px; color:#FCA5A5; font-size:0.9rem;">
+            ❌ Random K-Fold yields artificially optimistic metrics that fail in production deployment.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🛡️ Our OOT Split Solution</div>
+          <ul class="feature-list">
+            <li><span class="bullet">1.</span> <b>Development Train:</b> Jan 01 – Aug 31, 2025 (38,477 loads)</li>
+            <li><span class="bullet">2.</span> <b>Holdout Validation:</b> Sept 01 – Oct 31, 2025 (9,523 loads)</li>
+            <li><span class="bullet">3.</span> <b>Target Encoding Guard:</b> Out-of-fold computation without target exposure.</li>
+          </ul>
+          <div style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16,185,129,0.3); padding:14px; border-radius:10px; color:#6EE7B7; font-size:0.9rem; margin-top:14px;">
+            ✓ Strictly mirrors official evaluation setup on Nov 01 – Dec 31, 2025 (`validation.csv`).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Benchmark & Scorer Output -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div class="slide-tag">Model Benchmarks & Scorer</div>
+        <div class="slide-title">Empirical Results & Scorer Chart</div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📊 Empirical Model Comparison</div>
+          <table style="width:100%; border-collapse:collapse; font-size:0.9rem; margin-top:10px;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border-color); color:var(--highlight); text-align:left;">
+                <th style="padding:8px;">Model</th>
+                <th style="padding:8px;">MAE ($)</th>
+                <th style="padding:8px;">R² Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="color:#6EE7B7; font-weight:bold;"><td style="padding:8px;">CatBoost</td><td style="padding:8px;">$147.50</td><td style="padding:8px;">0.8350</td></tr>
+              <tr style="color:var(--accent-blue); font-weight:bold;"><td style="padding:8px;">Spotter Ensemble</td><td style="padding:8px;">$149.56</td><td style="padding:8px;">0.8322</td></tr>
+              <tr><td style="padding:8px;">LightGBM</td><td style="padding:8px;">$157.61</td><td style="padding:8px;">0.8203</td></tr>
+              <tr><td style="padding:8px;">XGBoost</td><td style="padding:8px;">$180.43</td><td style="padding:8px;">0.7954</td></tr>
+              <tr><td style="padding:8px;">Random Forest</td><td style="padding:8px;">$186.15</td><td style="padding:8px;">0.8024</td></tr>
+              <tr><td style="padding:8px;">Ridge Regression</td><td style="padding:8px;">$200.96</td><td style="padding:8px;">0.8242</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+          <div class="card-title" style="margin-bottom:8px;">📈 Candidate December Scorer Chart</div>
+          <img src="scorer_results/candidate_december.png" class="img-box" alt="December Chart">
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Architecture & Verification -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div class="slide-tag">Production Codebase</div>
+        <div class="slide-title">Modular Architecture & Verification</div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">💻 Modular Project Code (`src/`)</div>
+          <pre>
+e:\Spotter\
+├── src/
+│   ├── data_validation.py  # Schema audit
+│   ├── preprocessing.py    # 35 features
+│   ├── train.py            # Model training
+│   ├── evaluate.py         # Diagnostics
+│   └── predict.py          # Generator
+├── validation_predictions.csv  # 12,000 loads
+└── Spotter_ML_Assessment_Report.pdf
+          </pre>
+        </div>
+
+        <div class="card">
+          <div class="card-title">✅ Official Scorer Verification</div>
+          <ul class="feature-list">
+            <li><span class="bullet">✓</span> <b>12,000 Validation Predictions:</b> 100% compliant load_id order</li>
+            <li><span class="bullet">✓</span> <b>31 December Inputs:</b> Fixed inputs intact, positive rates</li>
+            <li><span class="bullet">✓</span> <b>Score.py Execution:</b> Exited with 0 errors</li>
+            <li><span class="bullet">✓</span> <b>GitHub Repository:</b> Pushed to <code style="color:var(--accent-blue)">github.com/omkaar08/spotter</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Teleprompter Drawer (Shown only if user clicks 'Script Helper') -->
+  <div class="teleprompter-drawer" id="teleprompter-drawer">
+    <span id="script-text">🎙️ <b>SCRIPT:</b> Loading spoken text...</span>
+  </div>
+
+  <!-- Footer Navigation Controls -->
+  <footer>
+    <button class="nav-btn" id="prev-btn" onclick="prevSlide()" disabled>← Previous</button>
+    <div class="dots">
+      <div class="dot active" onclick="goToSlide(0)"></div>
+      <div class="dot" onclick="goToSlide(1)"></div>
+      <div class="dot" onclick="goToSlide(2)"></div>
+      <div class="dot" onclick="goToSlide(3)"></div>
+      <div class="dot" onclick="goToSlide(4)"></div>
+    </div>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <button class="toggle-script-btn" onclick="toggleScript()">Script Teleprompter (Off)</button>
+      <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const drawer = document.getElementById('teleprompter-drawer');
+    const scriptText = document.getElementById('script-text');
+
+    const scripts = [
+      "🎙️ <b>SCRIPT (0:00–0:30):</b> 'Hi team, I'm Omkar Jagtap. Today I'm presenting my machine learning solution for Spotter AI's Freight Rate Prediction Challenge. Our goal is to accurately predict spot rates in USD for 12,000 future loads and a fixed 360-mile Lexington to Fort Wayne lane for December 2025.'",
+      "🎙️ <b>SCRIPT (0:30–1:00):</b> 'When exploring the dataset, I uncovered key insights: Haversine distance correlates 0.9995 with road miles, quote signal product explains 78% of rate variance, Reefer and Flatbed command 8 to 12% premiums over Dry Vans, and missing load weights were imputed via equipment medians.'",
+      "🎙️ <b>SCRIPT (1:00–1:35):</b> 'To prevent data leakage, I established an Out-Of-Time (OOT) Temporal Split. Instead of random K-Fold—which causes look-ahead leakage—I trained on Months 1 to 8 (Jan to Aug) and validated on Months 9 to 10 (Sept to Oct).'",
+      "🎙️ <b>SCRIPT (1:35–2:10):</b> 'CatBoost was our strongest single model with an out-of-time MAE of $147.50 and R² of 0.8350. For production, I deployed a Spotter Ensemble blending CatBoost, LightGBM, and Ridge Regression, generating our verified December chart.'",
+      "🎙️ <b>SCRIPT (2:10–2:30):</b> 'The repository is modularized under `src/` with dedicated validation, feature pipeline, training, and prediction scripts. `score.py` verified all 12,000 predictions with 0 errors. Thank you for reviewing my submission!'"
+    ];
+
+    function updateSlides() {
+      slides.forEach((slide, idx) => {
+        slide.classList.toggle('active', idx === currentSlide);
+      });
+
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentSlide);
+      });
+
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === slides.length - 1;
+      scriptText.innerHTML = scripts[currentSlide];
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      }
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      updateSlides();
+    }
+
+    function toggleScript() {
+      drawer.classList.toggle('active');
+      const btn = document.querySelector('.toggle-script-btn');
+      if (drawer.classList.contains('active')) {
+        btn.textContent = "Script Teleprompter (On)";
+        btn.style.color = "var(--accent-blue)";
+        btn.style.borderColor = "var(--accent-blue)";
+      } else {
+        btn.textContent = "Script Teleprompter (Off)";
+        btn.style.color = "var(--text-muted)";
+        btn.style.borderColor = "var(--border-color)";
+      }
+    }
+
+    // Keyboard Navigation (Left/Right Arrows)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    updateSlides();
+  </script>
+</body>
+</html>
